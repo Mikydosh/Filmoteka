@@ -7,11 +7,73 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Stránka seriálů</ion-title>
+      <ion-title size="large">Seriály</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div class="ion-padding">
-    <p>Obsah bude brzy k dispozici!</p>
-  </div>
+  <!-- Loading spinner -->
+  @if (isLoading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Načítám seriály...</p>
+    </div>
+  }
+
+  @if (!isLoading) {
+    <!-- Populární seriály -->
+    <section class="series-section">
+      <h2 class="section-title">Populární</h2>
+      <div class="series-grid">
+        @for (series of popularSeries; track series.id) {
+          <div class="series-card">
+            <img 
+              [src]="getPosterUrl(series.poster_path)" 
+              [alt]="series.name"
+              class="series-poster"
+            />
+            <div class="series-info">
+              <div class="series-text">
+                <h3>{{ series.name }}</h3>
+                <p class="series-year">{{ series.first_air_date | date:'yyyy' }}</p>
+              </div>
+              <div class="rating-circle">
+                <div class="rating-bg"></div>
+                <div class="rating-cover" [style.background]="getCoverGradient(series.vote_average)"></div>
+                <div class="rating-inner"></div>
+                <span>{{ getRatingPercent(series.vote_average) }}%</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Nejlépe hodnocené -->
+    <section class="series-section">
+      <h2 class="section-title">Nejlépe hodnocené</h2>
+      <div class="series-grid">
+        @for (series of topRatedSeries; track series.id) {
+          <div class="series-card">
+            <img 
+              [src]="getPosterUrl(series.poster_path)" 
+              [alt]="series.name"
+              class="series-poster"
+            />
+            <div class="series-info">
+              <div class="series-text">
+                <h3>{{ series.name }}</h3>
+                <p class="series-year">{{ series.first_air_date | date:'yyyy' }}</p>
+              </div>
+              <div class="rating-circle">
+                <div class="rating-bg"></div>
+                <div class="rating-cover" [style.background]="getCoverGradient(series.vote_average)"></div>
+                <div class="rating-inner"></div>
+                <span>{{ getRatingPercent(series.vote_average) }}%</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
 </ion-content>

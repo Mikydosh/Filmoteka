@@ -102,6 +102,20 @@ getUpcomingMovies(page: number = 1): Observable<TMDBResponse<Movie>> {
     );
   }
 
+  // Nejlépe hodnocené seriály
+getTopRatedSeries(page: number = 1): Observable<TMDBResponse<Series>> {
+  return this.http.get<TMDBResponse<Series>>(
+    `${this.BASE_URL}/tv/top_rated`,
+    {
+      params: {
+        api_key: this.API_KEY,
+        language: this.LANGUAGE,
+        page: page.toString()
+      }
+    }
+  );
+}
+
   // Vyhledat seriály
   searchSeries(query: string, page: number = 1): Observable<TMDBResponse<Series>> {
     return this.http.get<TMDBResponse<Series>>(
