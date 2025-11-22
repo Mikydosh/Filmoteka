@@ -7,11 +7,101 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Stránka filmů</ion-title>
+      <ion-title size="large">Filmy</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div class="ion-padding">
-    <p>Obsah bude brzy k dispozici!</p>
-  </div>
+  <!-- Loading spinner -->
+  @if (isLoading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Načítám filmy...</p>
+    </div>
+  }
+
+  @if (!isLoading) {
+    <!-- Populární filmy -->
+    <section class="movie-section">
+      <h2 class="section-title">Populární</h2>
+      <div class="movies-grid">
+        @for (movie of popularMovies; track movie.id) {
+          <div class="movie-card">
+            <img 
+              [src]="getPosterUrl(movie.poster_path)" 
+              [alt]="movie.title"
+              class="movie-poster"
+            />
+            <div class="movie-info">
+              <div class="movie-text">
+                <h3>{{ movie.title }}</h3>
+                <p class="movie-year">{{ movie.release_date | date:'yyyy' }}</p>
+              </div>
+              <div class="rating-circle">
+                <div class="rating-bg"></div>
+                <div class="rating-cover" [style.background]="getCoverGradient(movie.vote_average)"></div>
+                <div class="rating-inner"></div>
+                <span>{{ getRatingPercent(movie.vote_average) }}%</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Již brzy -->
+    <section class="movie-section">
+      <h2 class="section-title">Již brzy</h2>
+      <div class="movies-grid">
+        @for (movie of upcomingMovies; track movie.id) {
+          <div class="movie-card">
+            <img 
+              [src]="getPosterUrl(movie.poster_path)" 
+              [alt]="movie.title"
+              class="movie-poster"
+            />
+            <div class="movie-info">
+              <div class="movie-text">
+                <h3>{{ movie.title }}</h3>
+                <p class="movie-year">{{ movie.release_date | date:'yyyy' }}</p>
+              </div>
+              <div class="rating-circle">
+                <div class="rating-bg"></div>
+                <div class="rating-cover" [style.background]="getCoverGradient(movie.vote_average)"></div>
+                <div class="rating-inner"></div>
+                <span>{{ getRatingPercent(movie.vote_average) }}%</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Nejlépe hodnocené -->
+    <section class="movie-section">
+      <h2 class="section-title">Nejlépe hodnocené</h2>
+      <div class="movies-grid">
+        @for (movie of topRatedMovies; track movie.id) {
+          <div class="movie-card">
+            <img 
+              [src]="getPosterUrl(movie.poster_path)" 
+              [alt]="movie.title"
+              class="movie-poster"
+            />
+            <div class="movie-info">
+              <div class="movie-text">
+                <h3>{{ movie.title }}</h3>
+                <p class="movie-year">{{ movie.release_date | date:'yyyy' }}</p>
+              </div>
+              <div class="rating-circle">
+                <div class="rating-bg"></div>
+                <div class="rating-cover" [style.background]="getCoverGradient(movie.vote_average)"></div>
+                <div class="rating-inner"></div>
+                <span>{{ getRatingPercent(movie.vote_average) }}%</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
 </ion-content>
