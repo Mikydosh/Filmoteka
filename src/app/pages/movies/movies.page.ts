@@ -9,6 +9,7 @@ import {
 } from '@ionic/angular/standalone';
 import { TmdbService } from '../../services/tmdb.service';
 import { Movie } from '../../models/media.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-movies',
@@ -30,7 +31,7 @@ export class MoviesPage implements OnInit {
   upcomingMovies: Movie[] = [];
   isLoading = true;
 
-  constructor(private tmdbService: TmdbService) {}
+  constructor(private tmdbService: TmdbService, private router: Router) {}
 
   ngOnInit() {
     this.loadAllMovies();
@@ -90,4 +91,8 @@ export class MoviesPage implements OnInit {
     
     return `conic-gradient(from 0deg, transparent 0deg, transparent ${angle}deg, var(--ion-card-background, #fff) ${angle}deg, var(--ion-card-background, #fff) 360deg)`;
   }
+
+  openMovieDetail(movieId: number) {
+  this.router.navigate(['/movie', movieId]);
+}
 }

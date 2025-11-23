@@ -25,7 +25,7 @@
       <h2 class="section-title">Populární</h2>
       <div class="series-grid">
         @for (series of popularSeries; track series.id) {
-          <div class="series-card">
+          <div class="series-card" (click)="openSeriesDetail(series.id)">
             <img 
               [src]="getPosterUrl(series.poster_path)" 
               [alt]="series.name"
@@ -53,7 +53,7 @@
       <h2 class="section-title">Nejlépe hodnocené</h2>
       <div class="series-grid">
         @for (series of topRatedSeries; track series.id) {
-          <div class="series-card">
+          <div class="series-card" (click)="openSeriesDetail(series.id)">
             <img 
               [src]="getPosterUrl(series.poster_path)" 
               [alt]="series.name"

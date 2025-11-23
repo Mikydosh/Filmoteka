@@ -1,5 +1,6 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import {
   IonHeader,
   IonToolbar,
@@ -29,7 +30,7 @@ export class SeriesPage implements OnInit {
   topRatedSeries: Series[] = [];
   isLoading = true;
 
-  constructor(private tmdbService: TmdbService) {}
+  constructor(private tmdbService: TmdbService, private router : Router) {}
 
   ngOnInit() {
     this.loadAllSeries();
@@ -61,6 +62,10 @@ export class SeriesPage implements OnInit {
       },
       error: () => checkLoaded()
     });
+  }
+
+  openSeriesDetail(seriesId: number) {
+    this.router.navigate(['/series', seriesId]);
   }
 
   getPosterUrl(path: string | null): string {

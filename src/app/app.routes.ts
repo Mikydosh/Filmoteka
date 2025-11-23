@@ -6,12 +6,12 @@ export const routes: Routes = [
     loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
   },
   {
-    path: 'movies',
-    loadComponent: () => import('./pages/movies/movies.page').then( m => m.MoviesPage)
+    path: 'movie/:id',
+    loadComponent: () => import('./pages/movie-detail/movie-detail.page').then(m => m.MovieDetailPage)
   },
   {
-    path: 'series',
-    loadComponent: () => import('./pages/series/series.page').then( m => m.SeriesPage)
+    path: 'series/:id',
+    loadComponent: () => import('./pages/series-detail/series-detail.page').then(m => m.SeriesDetailPage)
   },
   {
     path: 'lists',
@@ -20,5 +20,5 @@ export const routes: Routes = [
   {
     path: 'settings',
     loadComponent: () => import('./pages/settings/settings.page').then( m => m.SettingsPage)
-  },
+  }
 ];

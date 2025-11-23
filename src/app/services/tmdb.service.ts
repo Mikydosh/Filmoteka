@@ -80,7 +80,8 @@ getUpcomingMovies(page: number = 1): Observable<TMDBResponse<Movie>> {
       {
         params: {
           api_key: this.API_KEY,
-          language: this.LANGUAGE
+          language: this.LANGUAGE,
+          append_to_response: 'credits'
         }
       }
     );
@@ -138,7 +139,8 @@ getTopRatedSeries(page: number = 1): Observable<TMDBResponse<Series>> {
       {
         params: {
           api_key: this.API_KEY,
-          language: this.LANGUAGE
+          language: this.LANGUAGE,
+          append_to_response: 'credits'
         }
       }
     );
@@ -148,7 +150,7 @@ getTopRatedSeries(page: number = 1): Observable<TMDBResponse<Series>> {
 
   // Získat URL plakátu
   // Velikosti: w92, w154, w185, w342, w500, w780, original
-  getPosterUrl(path: string | null, size: string = 'w342'): string {
+  getPosterUrl(path: string | null, size: string = 'original'): string {
     if (!path) {
       return 'assets/no-poster.png'; // Placeholder obrázek
     }
@@ -157,7 +159,7 @@ getTopRatedSeries(page: number = 1): Observable<TMDBResponse<Series>> {
 
   // Získat URL pozadí
   // Velikosti: w300, w780, w1280, original
-  getBackdropUrl(path: string | null, size: string = 'w780'): string {
+  getBackdropUrl(path: string | null, size: string = 'original'): string {
     if (!path) {
       return '';
     }

@@ -1,0 +1,159 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/series" text="Zpět"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ series?.name || 'Detail seriálu' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (isLoading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Načítám detail seriálu...</p>
+    </div>
+  } @else if (series) {
+    <!-- Backdrop (plakát s gradientem)-->
+    @if (series.backdrop_path) {
+      <div class="backdrop-container">
+        <img [src]="getBackdropUrl(series.backdrop_path)" [alt]="series.name" class="backdrop">
+        <div class="backdrop-overlay"></div>
+      </div>
+    }
+
+    <div class="series-content">
+      <!-- Header s posterem -->
+      <div class="series-header">
+        <img [src]="getPosterUrl(series.poster_path)" [alt]="series.name" class="poster">
+        <div class="series-info">
+          <!-- Název -->
+          <h1>{{ series.name }}</h1>
+          @if (series.original_name !== series.name) {
+            <p class="original-title">{{ series.original_name }}</p>
+          }
+          <!-- INFO -->
+          <div class="meta">
+            <span>{{ getYear(series.first_air_date) }}</span>
+            <span>•</span>
+            <span>{{ series.number_of_seasons }} sezón</span>
+          </div>
+          <!-- Hodnocení -->
+          <div class="rating-section">
+            <!-- Kruh s procenty -->
+            <div class="rating-circle">
+              <div class="rating-bg"></div>
+              <div class="rating-cover" [style.background]="getCoverGradient(series.vote_average)"></div>
+              <div class="rating-inner"></div>
+              <span>{{ getRatingPercent(series.vote_average) }}%</span>
+            </div>
+            <!-- Skóre a počet hlasů -->
+            <div class="rating-text">
+              <div class="score">{{ series.vote_average | number:'1.1-1' }}/10</div>
+              <div class="votes">{{ series.vote_count }} hlasů</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Žánry -->
+      @if (series.genres && series.genres.length > 0) {
+        <div class="genres">
+          @for (genre of series.genres; track genre.id) {
+            <ion-chip>
+              <ion-label>{{ genre.name }}</ion-label>
+            </ion-chip>
+          }
+        </div>
+      }
+
+      <!-- Popis -->
+      @if (series.overview) {
+        <div class="section">
+          <h2>Popis</h2>
+          <p class="overview">{{ series.overview }}</p>
+        </div>
+      }
+
+      <!-- Dodatečné info -->
+      <div class="section">
+        <h2>Informace</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Sezón</span>
+            <span class="value">{{ series.number_of_seasons }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Epizod</span>
+            <span class="value">{{ series.number_of_episodes }}</span>
+          </div>
+          @if (series.episode_run_time && series.episode_run_time.length > 0) {
+            <div class="info-item">
+              <span class="label">Délka epizody</span>
+              <span class="value">{{ series.episode_run_time[0] }} min</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Herci (top 12) - PRVNÍ -->
+      @if (series.credits?.cast?.length) {
+        <div class="section">
+          <h2>Obsazení</h2>
+          <div class="cast-grid">
+            @for (actor of (series.credits?.cast || []).slice(0, 12); track actor.id) {
+              <div class="cast-card">
+                @if (actor.profile_path) {
+                  <img 
+                    [src]="getProfileUrl(actor.profile_path)" 
+                    [alt]="actor.name"
+                    class="cast-photo"
+                  />
+                } @else {
+                  <div class="cast-photo no-photo">
+                    <ion-icon name="person"></ion-icon>
+                  </div>
+                }
+                <div class="cast-info">
+                  <p class="cast-name">{{ actor.name }}</p>
+                  <p class="cast-character">{{ actor.character }}</p>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+       <!-- Štáb -->
+      <div class="section">
+        <h2>Štáb</h2>
+        <div class="info-grid">
+          @if (getDirector(); as director) {
+            <div class="info-item">
+              <span class="label">Režie</span>
+              <span class="value">{{ director.name }}</span>
+            </div>
+          }
+          @if (getComposer(); as composer) {
+            <div class="info-item">
+              <span class="label">Hudba</span>
+              <span class="value">{{ composer.name }}</span>
+            </div>
+          }
+          @if (series.created_by && series.created_by.length > 0) {
+            <div class="info-item">
+              <span class="label">Tvůrci</span>
+              <span class="value">{{ getCreators() }}</span>
+            </div>
+          }
+          @if (series.networks && series.networks.length > 0) {
+            <div class="info-item">
+              <span class="label">Vysílá</span>
+              <span class="value">{{ getNetworks() }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</ion-content>

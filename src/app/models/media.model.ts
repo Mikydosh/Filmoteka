@@ -24,6 +24,7 @@ export interface MovieDetails extends Movie {
   tagline: string;
   genres: Genre[];
   production_companies: ProductionCompany[];
+  credits?: Credits;
 }
 
 // Seriál z API
@@ -53,6 +54,7 @@ export interface SeriesDetails extends Series {
   genres: Genre[];
   created_by: Creator[];
   networks: Network[];
+  credits?: Credits;
 }
 
 // Pomocné typy
@@ -78,6 +80,27 @@ export interface Network {
   id: number;
   name: string;
   logo_path: string | null;
+}
+
+export interface Credits {
+  cast: Cast[];
+  crew: Crew[];
+}
+
+export interface Cast {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
+  order: number;
+}
+
+export interface Crew {
+  id: number;
+  name: string;
+  job: string;
+  department: string;
+  profile_path: string | null;
 }
 
 // Odpověď z API (stránkování)

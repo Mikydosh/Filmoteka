@@ -1,0 +1,189 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/movies" text="Zpět"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ movie?.title || 'Detail filmu' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading-->
+  @if (isLoading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Načítám detail filmu...</p>
+    </div>
+  } @else if (movie) {
+    <!-- Backdrop (plakát s gradientem)-->
+    @if (movie.backdrop_path) {
+      <div class="backdrop-container">
+        <img [src]="getBackdropUrl(movie.backdrop_path)" [alt]="movie.title" class="backdrop">
+        <div class="backdrop-overlay"></div>
+      </div>
+    }
+    <!-- Obsah detailu-->
+    <div class="movie-content">
+      <!-- HEADER (plakát a názvy) -->
+      <div class="movie-header">
+        <!-- Plakát-->
+        <img [src]="getPosterUrl(movie.poster_path)" [alt]="movie.title" class="poster">
+        <div class="movie-info">
+          <!-- Název CZ -->
+          <h1>{{ movie.title }}</h1>
+          @if (movie.original_title !== movie.title) {
+            <!-- Název originál -->
+            <p class="original-title">{{ movie.original_title }}</p>
+          }
+          <!-- Doplňující informace (rok a délka)-->
+          <div class="meta">
+            <span>{{ getYear(movie.release_date) }}</span>
+            @if (movie.runtime) {
+              <span>•</span>
+              <span>{{ formatRuntime(movie.runtime) }}</span>
+            }
+          </div>
+
+        <!-- Sekce s hodnocením -->
+          <div class="rating-section">
+            <!-- Kruh s gradientem a procenty-->
+            <div class="rating-circle">
+              <div class="rating-bg"></div>
+              <div class="rating-cover" [style.background]="getCoverGradient(movie.vote_average)"></div>
+              <div class="rating-inner"></div>
+              <span>{{ getRatingPercent(movie.vote_average) }}%</span>
+            </div>
+            <!-- Původní hodnocení a počet hlasů-->
+            <div class="rating-text">
+              <div class="score">{{ movie.vote_average | number:'1.1-1' }}/10</div>
+              <div class="votes">{{ movie.vote_count }} hlasů</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- INFO O FILMU-->
+      <!-- Žánry -->
+      @if (movie.genres && movie.genres.length > 0) {
+        <div class="genres">
+          @for (genre of movie.genres; track genre.id) {
+            <ion-chip>
+              <ion-label>{{ genre.name }}</ion-label>
+            </ion-chip>
+          }
+        </div>
+      }
+
+      <!-- Popis -->
+      @if (movie.overview) {
+        <div class="section">
+          <h2>Popis</h2>
+          <p class="overview">{{ movie.overview }}</p>
+        </div>
+      }
+
+      <!-- Dodatečné info -->
+      <div class="section">
+        <h2>Informace</h2>
+        <div class="info-grid">
+          <!-- Originální jazyk -->
+          <div class="info-item">
+            <span class="label">Původní jazyk</span>
+            <span class = "value"> {{movie.original_language}}</span>
+          </div>
+          <!-- Rozpočet filmu -->
+          @if (movie.budget && movie.budget > 0) {
+            <div class="info-item">
+              <span class="label">Rozpočet</span>
+              <span class="value">{{ movie.budget / 1000000 | number:'1.0-0' }}M $</span>
+            </div>
+          }
+          <!-- Tržby filmu -->
+          @if (movie.revenue && movie.revenue > 0) {
+            <div class="info-item">
+              <span class="label">Tržby</span>
+              <span class="value">{{ movie.revenue / 1000000 | number:'1.0-0' }}M $</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Produkce -->
+      @if (movie.production_companies && movie.production_companies.length > 0) {
+        <div class="section">
+          <h2>Produkce</h2>
+          <p class="companies">{{ getProductionCompanies() }}</p>
+        </div>
+      }
+
+      <!-- Klíčové osoby (režie a hudba)-->
+      @if (getDirector() || getComposer()) {
+        <div class="section">
+          <h2>Klíčové osoby</h2>
+          <div class="cast-grid">
+            <!-- Režisér -->
+            @if (getDirector(); as director) {
+              <div class="cast-card">
+                @if (director.profile_path) {
+                  <img [src]="getProfileUrl(director.profile_path)" [alt]="director.name" class="cast-photo">
+                } @else {
+                  <div class="cast-photo no-photo">
+                    <ion-icon name="person"></ion-icon>
+                  </div>
+                }
+                <div class="cast-info">
+                  <p class="cast-name">{{ director.name }}</p>
+                  <p class="cast-character">Režie</p>
+                </div>
+              </div>
+            }
+      <!-- Hudba -->
+      @if (getComposer(); as composer) {
+        <div class="cast-card">
+          @if (composer.profile_path) {
+            <img [src]="getProfileUrl(composer.profile_path)" [alt]="composer.name" class="cast-photo">
+          } @else {
+            <div class="cast-photo no-photo">
+              <ion-icon name="musical-notes"></ion-icon>
+            </div>
+          }
+          <div class="cast-info">
+            <p class="cast-name">{{ composer.name }}</p>
+            <p class="cast-character">Hudba</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- Herci (top 12) -->
+@if (movie.credits?.cast?.length) {
+  <div class="section">
+    <h2>Obsazení</h2>
+    <div class="cast-grid">
+      @for (actor of (movie.credits?.cast || []).slice(0, 12); track actor.id) {
+        <div class="cast-card">
+          @if (actor.profile_path) {
+            <img 
+              [src]="getProfileUrl(actor.profile_path)" 
+              [alt]="actor.name"
+              class="cast-photo"
+            />
+          } @else {
+            <div class="cast-photo no-photo">
+              <ion-icon name="person"></ion-icon>
+            </div>
+          }
+          <div class="cast-info">
+            <p class="cast-name">{{ actor.name }}</p>
+            <p class="cast-character">{{ actor.character }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}
+    </div>
+  }
+</ion-content>

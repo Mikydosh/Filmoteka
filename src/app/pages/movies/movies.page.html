@@ -25,7 +25,7 @@
       <h2 class="section-title">Populární</h2>
       <div class="movies-grid">
         @for (movie of popularMovies; track movie.id) {
-          <div class="movie-card">
+          <div class="movie-card" (click)="openMovieDetail(movie.id)">
             <img 
               [src]="getPosterUrl(movie.poster_path)" 
               [alt]="movie.title"
@@ -53,7 +53,7 @@
       <h2 class="section-title">Již brzy</h2>
       <div class="movies-grid">
         @for (movie of upcomingMovies; track movie.id) {
-          <div class="movie-card">
+          <div class="movie-card" (click)="openMovieDetail(movie.id)">
             <img 
               [src]="getPosterUrl(movie.poster_path)" 
               [alt]="movie.title"
@@ -81,7 +81,7 @@
       <h2 class="section-title">Nejlépe hodnocené</h2>
       <div class="movies-grid">
         @for (movie of topRatedMovies; track movie.id) {
-          <div class="movie-card">
+          <div class="movie-card" (click)="openMovieDetail(movie.id)">
             <img 
               [src]="getPosterUrl(movie.poster_path)" 
               [alt]="movie.title"
