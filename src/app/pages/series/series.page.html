@@ -2,6 +2,15 @@
   <ion-toolbar>
     <ion-title>Seriály</ion-title>
   </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar
+      placeholder="Hledat seriály..."
+      (ionInput)="onSearchChange($event)"
+      (ionCancel)="onSearchCancel()"
+      [debounce]="0"
+      showCancelButton="focus"
+    ></ion-searchbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
@@ -11,12 +20,56 @@
     </ion-toolbar>
   </ion-header>
 
-  <!-- Loading spinner -->
-  @if (isLoading) {
-    <div class="loading-container">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Načítám seriály...</p>
+  @if (showSearchResults) {
+    <div class="search-results">
+      @if (isSearching) {
+        <div class="loading-container">
+          <ion-spinner name="crescent"></ion-spinner>
+          <p>Vyhledávám...</p>
+        </div>
+      } @else if (searchResults.length > 0) {
+        <section class="series-section">
+          <h2 class="section-title">Výsledky vyhledávání ({{ searchResults.length }})</h2>
+          <div class="series-grid">
+            @for (series of searchResults; track series.id) {
+              <div class="series-card" (click)="openSeriesDetail(series.id)">
+                <img 
+                  [src]="getPosterUrl(series.poster_path)" 
+                  [alt]="series.name"
+                  class="series-poster"
+                />
+                <div class="series-info">
+                  <div class="series-text">
+                    <h3>{{ series.name }}</h3>
+                    <p class="series-year">{{ series.first_air_date | date:'yyyy' }}</p>
+                  </div>
+                  <div class="rating-circle">
+                    <div class="rating-bg"></div>
+                    <div class="rating-cover" [style.background]="getCoverGradient(series.vote_average)"></div>
+                    <div class="rating-inner"></div>
+                    <span>{{ getRatingPercent(series.vote_average) }}%</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+      } @else {
+        <div class="no-results">
+          <ion-icon name="search-outline"></ion-icon>
+          <p>Žádné výsledky</p>
+        </div>
+      }
     </div>
+  }
+  @if(!searchResults){
+    <!-- Loading spinner -->
+    @if (isLoading) {
+      <div class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Načítám seriály...</p>
+      </div>
+    }
   }
 
   @if (!isLoading) {

@@ -10,6 +10,8 @@ import {
 } from '@ionic/angular/standalone';
 import { TmdbService } from '../../services/tmdb.service';
 import { Series } from '../../models/media.model';
+import { IonSearchbar } from '@ionic/angular/standalone';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-series',
@@ -22,7 +24,8 @@ import { Series } from '../../models/media.model';
     IonToolbar,
     IonTitle,
     IonContent,
-    IonSpinner
+    IonSpinner,
+    IonSearchbar
   ],
 })
 export class SeriesPage implements OnInit {
@@ -30,10 +33,28 @@ export class SeriesPage implements OnInit {
   topRatedSeries: Series[] = [];
   isLoading = true;
 
+  //Search
+  searchResults: Series[] = [];
+  isSearching = false;
+  showSearchResults = false;
+  private searchSubject = new Subject<string>();
+
   constructor(private tmdbService: TmdbService, private router : Router) {}
 
   ngOnInit() {
     this.loadAllSeries();
+
+    //search
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(searchTerm => {
+      if (searchTerm.trim().length > 0) {
+        this.performSearch(searchTerm);
+      } else {
+        this.clearSearch();
+      }
+    });
   }
 
   loadAllSeries() {
@@ -81,5 +102,36 @@ export class SeriesPage implements OnInit {
     const angle = (percent / 100) * 360;
     
     return `conic-gradient(from 0deg, transparent 0deg, transparent ${angle}deg, var(--ion-card-background, #fff) ${angle}deg, var(--ion-card-background, #fff) 360deg)`;
+  }
+
+  // Search
+  onSearchChange(event: any) {
+    const query = event.target.value;
+    this.searchSubject.next(query);
+  }
+
+  performSearch(query: string) {
+    this.isSearching = true;
+    this.showSearchResults = true;
+    
+    this.tmdbService.searchSeries(query).subscribe({
+      next: (response) => {
+        this.searchResults = response.results;
+        this.isSearching = false;
+      },
+      error: () => {
+        this.isSearching = false;
+      }
+    });
+  }
+
+  clearSearch() {
+    this.searchResults = [];
+    this.showSearchResults = false;
+    this.isSearching = false;
+  }
+
+  onSearchCancel() {
+    this.clearSearch();
   }
 }

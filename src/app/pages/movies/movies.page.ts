@@ -10,6 +10,8 @@ import {
 import { TmdbService } from '../../services/tmdb.service';
 import { Movie } from '../../models/media.model';
 import { Router } from '@angular/router';
+import { IonSearchbar } from '@ionic/angular/standalone';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-movies',
@@ -22,7 +24,8 @@ import { Router } from '@angular/router';
     IonToolbar,
     IonTitle,
     IonContent,
-    IonSpinner
+    IonSpinner,
+    IonSearchbar
   ],
 })
 export class MoviesPage implements OnInit {
@@ -31,10 +34,25 @@ export class MoviesPage implements OnInit {
   upcomingMovies: Movie[] = [];
   isLoading = true;
 
+  //pro search
+  searchResults: Movie[] = [];
+  isSearching = false;
+  showSearchResults = false;
+  private searchSubject = new Subject<string>();
+
   constructor(private tmdbService: TmdbService, private router: Router) {}
 
   ngOnInit() {
     this.loadAllMovies();
+
+    // debounce pro search
+    this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe(searchTerm => {
+      if(searchTerm.trim().length > 0){
+        this.performSearch(searchTerm);
+      }else{
+        this.clearSearch();
+      }
+    });
   }
 
   loadAllMovies() {
@@ -94,5 +112,37 @@ export class MoviesPage implements OnInit {
 
   openMovieDetail(movieId: number) {
   this.router.navigate(['/movie', movieId]);
+  }
+
+// HLEDANI
+onSearchChange(event: any){
+  const query = event.target.value;
+  this.searchSubject.next(query);
 }
+
+performSearch(query: string) {
+  this.isSearching = true;
+  this.showSearchResults = true;
+  
+  this.tmdbService.searchMovies(query).subscribe({
+    next: (response) => {
+      this.searchResults = response.results;
+      this.isSearching = false;
+    },
+    error: () => {
+      this.isSearching = false;
+    }
+  });
+}
+
+clearSearch() {
+  this.searchResults = [];
+  this.showSearchResults = false;
+  this.isSearching = false;
+}
+
+onSearchCancel() {
+  this.clearSearch();
+}
+
 }

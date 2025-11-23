@@ -2,6 +2,15 @@
   <ion-toolbar>
     <ion-title>Filmy</ion-title>
   </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar
+      placeholder="Hledat filmy..."
+      (ionInput)="onSearchChange($event)"
+      (ionCancel)="onSearchCancel()"
+      [debounce]="0"
+      showCancelButton="focus"
+    ></ion-searchbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
@@ -11,14 +20,58 @@
     </ion-toolbar>
   </ion-header>
 
-  <!-- Loading spinner -->
-  @if (isLoading) {
-    <div class="loading-container">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Načítám filmy...</p>
+  <!-- Výsledky vyhledávání -->
+  @if (showSearchResults) {
+    <div class="search-results">
+      @if (isSearching) {
+        <div class="loading-container">
+          <ion-spinner name="crescent"></ion-spinner>
+          <p>Vyhledávám...</p>
+        </div>
+      } @else if (searchResults.length > 0) {
+        <section class="movie-section">
+          <h2 class="section-title">Výsledky vyhledávání ({{ searchResults.length }})</h2>
+          <div class="movies-grid">
+            @for (movie of searchResults; track movie.id) {
+              <div class="movie-card" (click)="openMovieDetail(movie.id)">
+                <img 
+                  [src]="getPosterUrl(movie.poster_path)" 
+                  [alt]="movie.title"
+                  class="movie-poster"
+                />
+                <div class="movie-info">
+                  <div class="movie-text">
+                    <h3>{{ movie.title }}</h3>
+                    <p class="movie-year">{{ movie.release_date | date:'yyyy' }}</p>
+                  </div>
+                  <div class="rating-circle">
+                    <div class="rating-bg"></div>
+                    <div class="rating-cover" [style.background]="getCoverGradient(movie.vote_average)"></div>
+                    <div class="rating-inner"></div>
+                    <span>{{ getRatingPercent(movie.vote_average) }}%</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+      } @else {
+        <div class="no-results">
+          <ion-icon name="search-outline"></ion-icon>
+          <p>Žádné výsledky</p>
+        </div>
+      }
     </div>
   }
-
+@if(!searchResults){
+  <!-- Loading spinner -->
+  @if (isLoading) {
+  <div class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Načítám filmy...</p>
+  </div>
+  }
+}
   @if (!isLoading) {
     <!-- Populární filmy -->
     <section class="movie-section">
