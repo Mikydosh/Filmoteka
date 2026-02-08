@@ -57,28 +57,27 @@ npm install
 
 ### 3. Konfigurace API klíčů
 
-> ⚠️ **ŠKOLNÍ PROJEKT - PROSÍM O RESPEKT**: API klíče níže jsou sdíleny **POUZE** pro usnadnění testování a plug and play spuštění tohoto školního projektu. **NEZNEUŽÍVEJTE JE, PROSÍM**. Při zneužití budou klíče deaktivovány a projekt přestane fungovat.
+> ⚠️ **ŠKOLNÍ PROJEKT:** API klíče byly sdíleny **POUZE PRO DEMONSTRACI PROJEKTU**, nyní už nefungují a každý uživatel musí provést vlastní konfiguraci.
 
-Soubor `src/environments/environment.ts` je již nakonfigurován s těmito hodnotami:
+Soubor `src/environments/environment.ts` má kostru, co je potřeba nakonfigurovat:
 ```typescript
 export const environment = {
   production: false,
-  tmdbApiKey: 'your_tmdb_key',
+  tmdbApiKey: 'your_tmdb_api_key_here',
   tmdbBaseUrl: 'https://api.themoviedb.org/3',
   tmdbImageBaseUrl: 'https://image.tmdb.org/t/p',
-  
+
   firebase: {
-    apiKey: "your_firebase_key",
-    authDomain: "filmoteka-ebe17.firebaseapp.com",
-    projectId: "filmoteka-ebe17",
-    storageBucket: "filmoteka-ebe17.firebasestorage.app",
-    messagingSenderId: "880867438842",
-    appId: "1:880867438842:web:abca5fc6419972e8085943"
-  }
+    // your firebase configuration here
+  apiKey: "your_firebase_api_key_here",
+  authDomain: "your_firebase_auth_domain_here",
+  projectId: "your_firebase_project_id_here",
+  storageBucket: "your_firebase_storage_bucket_here",
+  messagingSenderId: "your_firebase_messaging_sender_id_here",
+  appId: "your_firebase_app_id_here"
+}
 };
 ```
-
-> 📝 **Poznámka**: Tyto konfigurace jsou již zahrnuty v repozitáři. Nemusíš nic měnit pro základní fungování aplikace a stačí pokračovat bodem č. **5**. 
 
 > **Pro svůj vlastní účet doporučuji požádat o vlastní API klíče: [Jak získat vlastní API klíče](#jak-získat-vlastní-api-klíče)**
 - **TMDB API**: Registruj se na [themoviedb.org](https://www.themoviedb.org/) a získej API klíč v nastavení účtu (je potřeba vyplnit formulář a zdůraznit, že se jedná o vlastní potřebu, školní projekt atd.
