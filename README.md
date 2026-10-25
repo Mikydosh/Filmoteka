@@ -1,26 +1,23 @@
 # 🎬 Filmotéka
 
-Mobilní aplikace pro správu filmů a seriálů postavená na Ionic Framework (Angular) s Firebase backend.
-
-> ⚠️ **DŮLEŽITÉ UPOZORNĚNÍ**: Tato aplikace je **školní projekt** určený pouze pro demonstrační a vzdělávací účely. API klíče jsou zahrnuti pro usnadnění testování, ale **PROSÍM NEZNEUŽÍVEJTE JE**. Jakékoliv zneužití může vést k zablokování služeb. Děkuji za pochopení a respekt.
+Mobilní aplikace pro procházení filmů a seriálů a správu vlastních seznamů. Postavená na Ionic (Angular) a Capacitoru, data o filmech pochází z TMDB API, uživatelé a seznamy jsou uloženy ve Firebase.
+ 
+Školní projekt (UTB FAI Zlín, Mobilní technologie).
 
 <img width="200" height="200" alt="logo-square" src="https://github.com/user-attachments/assets/89c62ccd-973c-4f3b-b8c4-ad2809fefd7f" />
 
-## 📱 O aplikaci
 
-Filmotéka je moderní mobilní aplikace, která umožňuje uživatelům procházet databázi filmů a seriálů, organizovat je do vlastních seznamů a sledovat svou sledovanost. Aplikace využívá **TMDB API** pro získání informací o filmech a **Firebase** pro autentizaci a ukládání dat.
+## ✨ Hlavní funkce
 
-### ✨ Hlavní funkce
-
-- 🎥 **Procházení filmů a seriálů** - populární, nejlépe hodnocené, nadcházející
-- 📖 **Detailní informace** - popis, hodnocení, herci, štáb
-- 🔍 **Vyhledávání** - rychlé vyhledávání s debounce
-- 📋 **Vlastní seznamy** - vytváření a správa vlastních seznamů
-- ✅ **Výchozí seznamy** - "Zhlédnuto" a "Chci vidět"
-- 🌙 **Tmavý režim** - přepínání mezi světlým a tmavým tématem
-- 🔐 **Autentizace** - přihlášení, registrace, změna hesla
-- 📱 **Responzivní design** - optimalizováno pro různé velikosti obrazovek
-- ♾️ **Infinite scroll** - plynulé načítání dalších filmů
+- **Procházení filmů a seriálů** - populární, nejlépe hodnocené, nadcházející
+- **Detailní informace** - popis, hodnocení, herci, štáb
+- **Vyhledávání** - rychlé vyhledávání s debounce
+- **Vlastní seznamy** - vytváření a správa vlastních seznamů
+- **Výchozí seznamy** - "Zhlédnuto" a "Chci vidět"
+- **Tmavý režim** - přepínání mezi světlým a tmavým tématem
+- **Autentizace** - přihlášení, registrace, změna hesla
+- **Responzivní design** - optimalizováno pro různé velikosti obrazovek
+- **Infinite scroll** - plynulé načítání dalších filmů
 
 ## 🚀 Technologie
 
@@ -57,9 +54,8 @@ npm install
 
 ### 3. Konfigurace API klíčů
 
-> ⚠️ **ŠKOLNÍ PROJEKT:** API klíče byly sdíleny **POUZE PRO DEMONSTRACI PROJEKTU**, nyní už nefungují a každý uživatel musí provést vlastní konfiguraci.
+> ⚠️ Repozitář **neobsahuje** žádné API klíče. Před spuštěním je potřeba získat vlastní a doplnit je do souborů `src/environments/environment.ts` a `src/environments/environment.prod.ts`:
 
-Soubor `src/environments/environment.ts` má kostru, co je potřeba nakonfigurovat:
 ```typescript
 export const environment = {
   production: false,
@@ -79,78 +75,51 @@ export const environment = {
 };
 ```
 
-> **Pro svůj vlastní účet doporučuji požádat o vlastní API klíče: [Jak získat vlastní API klíče](#jak-získat-vlastní-api-klíče)**
-- **TMDB API**: Registruj se na [themoviedb.org](https://www.themoviedb.org/) a získej API klíč v nastavení účtu (je potřeba vyplnit formulář a zdůraznit, že se jedná o vlastní potřebu, školní projekt atd.
-- **Firebase**: Vytvoř projekt na [firebase.google.com](https://firebase.google.com/) a zkopíruj konfiguraci:
+### TMDB
+ 
+1. Zaregistruj se na [themoviedb.org](https://www.themoviedb.org/) a potvrď e-mail.
+2. Otevři Settings, záložku API a požádej o API klíč. Žádost vyžaduje krátký formulář (typ použití: osobní, popis: školní projekt).
+3. Zkopíruj hodnotu „API Key“ do `tmdbApiKey`.
 
-### 4. Firebase nastavení
+### Firebase
+ 
+1. V [Firebase Console](https://console.firebase.google.com/) vytvoř nový projekt.
+2. V sekci Authentication zapni poskytovatele Email/Password.
+3. V sekci Firestore Database vytvoř databázi.
+4. V záložce Rules nastav pravidla:
 
-1. Vytvoř Firebase projekt
-2. Aktivuj **Authentication** (Email/Password provider)
-3. Vytvoř **Firestore Database**
-4. Nastav Firestore pravidla:
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-  }
-}
 ```
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /users/{userId}/{document=**} {
+         allow read, write: if request.auth != null && request.auth.uid == userId;
+       }
+     }
+   }
+```
+
+5. V Project settings přidej webovou aplikaci (ikona `</>`), zkopíruj zobrazený objekt `firebaseConfig` a hodnoty vlož do části `firebase` v obou environment souborech.
+
 ## 🏃 Spuštění
 
-### Vývojový server (web) - pouze webová aplikace
+Webová verze:
+ 
 ```bash
 ionic serve
 ```
-
-Aplikace poběží na `http://localhost:8100`
-
-### První přihlášení
-
-Můžeš si vytvořit nový účet přímo v aplikaci pomocí:
-1. Klikni na "Registrovat se"
-2. Zadej email a heslo (min. 6 znaků)
-3. Po registraci budeš automaticky přihlášen
-
-### Build pro Android
+ 
+Aplikace poběží na `http://localhost:8100`. Účet si vytvoříš přímo v aplikaci přes „Registrovat se“ (heslo alespoň 6 znaků).
+ 
+### Android
+ 
 ```bash
-ctrl+C // pro zastavení serveru (pokud byl spuštěn příkaz ionic serve)
 ionic build
-ionic cap add android // -> V na githubu už je, není potřeba psát. Jinak přepíše složku /android, kde jsou vlastní ikony atd.
 ionic cap sync android
 ionic cap open android
 ```
-
-Otevře se Android Studio → spusť na emulátoru nebo fyzickém zařízení.
-
-### Android studio
-1. Počkat, až se všechno načte
-2. Pokud bude nahoře šedá ikona ▶️ a text "Edit Configurations":
-   - Kliknout na ikonu **Slona s šipkou** (Sync Project with Gradle Files)
-   - Pokud ani to nepomůže, je nutné nastavit konfiguraci aplikace
-   - Pokud chybí emulátor zařízení, musí se přidat
-
-### Konfigurace:
-3. **Nahoře** klikni na "Edit Configurations..."
-4. Klikni na „+“ (Add New Configuration) a vyber Android Application.
-5. V poli Module vyber `app` (nebo název modulu)
-6. Dej konfiguraci nějaké jméno (např. „app“)
-7. Apply -> OK
-
-### Emulátor:
->Pokud nemáš nakonfigurované zařízení, je potřeba v pravém panelu **Device manager** přidat zařízení
-8. Klikni na „+“
-9. Create Virtual Device
-10. Vyber si telefon, já testoval Pixel 9 Pro, 9 Pro XL a medium phone
-11. Next > Finish > Yes
-12. Počkej, až se vše stáhne
-
-13. Utelefonu klikni na ▶️ a počkej, až se spustí
-14. Stiskni ▶️ nahoře vedle app a počkej, až se aplikace spustí
-15. Aplikace běží
+ 
+V Android Studiu počkej na dokončení synchronizace Gradle, vyber nebo vytvoř virtuální zařízení (Device Manager) a aplikaci spusť tlačítkem Run. Složka `android/` je už součástí repozitáře, příkaz `ionic cap add android` spouštět nemusíš (přepsal by vlastní ikony a nastavení).
 
 ## 📁 Struktura projektu
 ```
@@ -216,41 +185,6 @@ filmoteka/
 - Vymazání všech dat
 - Odhlášení
 
-
-## 📝 Poznámky
-
-- **TMDB API** má rate limit 50 requestů/sekundu
-- **Firebase** má free tier limit (50k reads/day)
-- Aplikace používá **localStorage** pro uložení preference dark mode
-- **Firestore** ukládá data pod strukturou `users/{userId}/lists/{listId}`
-
-## ⚠️ Důležité upozornění o API klíčích
-
-> **ŠKOLNÍ PROJEKT**: Tento repozitář obsahuje API klíče **POUZE** pro účely demonstrace a testování školního projektu. Klíče jsou sdíleny s důvěrou, že nebudou zneužity.
-> 
-> **PROSÍM:**
-> - ❌ Nepoužívejte tyto klíče pro vlastní komerční projekty
-> - ❌ Nesdílejte tyto klíče dále
-> - ❌ Neprovádějte nadměrné množství requestů
-> - ✅ Používejte aplikaci pouze pro testování a vzdělávací účely
-> - ✅ Pokud chcete vlastní verzi, vytvořte si vlastní TMDB a Firebase účty
->
-> Při zneužití budou klíče **okamžitě deaktivovány** a aplikace přestane fungovat pro všechny. Děkuji za pochopení a respekt! 🙏
-
-### Jak získat vlastní API klíče
-
-Pokud chceš vytvořit vlastní verzi:
-
-1. **TMDB API**: 
-   - Registruj se na [themoviedb.org](https://www.themoviedb.org/)
-   - Jdi do Settings → API
-   - Požádej o API klíč (zdarma)
-
-2. **Firebase**: 
-   - Vytvoř projekt na [firebase.google.com](https://firebase.google.com/)
-   - Aktivuj Authentication (Email/Password)
-   - Vytvoř Firestore Database
-   - Zkopíruj konfiguraci do `environment.ts`
 
 ## 👤 Autor
 
